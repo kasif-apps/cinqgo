@@ -1,14 +1,12 @@
-package slice
+package cinqgo
 
 import (
 	"encoding/json"
 	"errors"
-
-	et "github.com/kasif-apps/cinqgo/event_target"
 )
 
 type Slice[T any] struct {
-	et.EventTarget
+	EventTarget
 	value T
 }
 
@@ -34,14 +32,14 @@ func (slice *Slice[T]) Set(setter SetterFunc[T]) error {
 
 func (slice *Slice[T]) commit(value T) {
 	slice.value = value
-	slice.DispatchEvent(et.NewEvent("update", value))
+	slice.DispatchEvent(NewEvent("update", value))
 }
 
 func (slice Slice[T]) Get() T {
 	return slice.value
 }
 
-func (slice Slice[T]) Subscribe(callback_fn func(e et.Event)) func() {
+func (slice Slice[T]) Subscribe(callback_fn func(e Event)) func() {
 	slice.AddEventListener("update", &callback_fn)
 
 	return func() {
@@ -53,7 +51,7 @@ func Derive[T any, K any](parent Slice[T], getter GetterFunc[T, K]) ReadonlySlic
 	intrinsic_value := getter(parent.value)
 	sub_slice := NewReadonlySlice(intrinsic_value)
 
-	parent.Subscribe(func(e et.Event) {
+	parent.Subscribe(func(e Event) {
 		new_value := getter(e.Detail.(T))
 		sub_slice.assign(new_value)
 	})
@@ -63,7 +61,7 @@ func Derive[T any, K any](parent Slice[T], getter GetterFunc[T, K]) ReadonlySlic
 
 func NewSlice[T any](value T) Slice[T] {
 	return Slice[T]{
-		EventTarget: et.NewEventTarget(),
+		EventTarget: NewEventTarget(),
 		value:       value,
 	}
 }
@@ -91,7 +89,7 @@ func (slice *ReadonlySlice[T]) Set(setter SetterFunc[T]) error {
 func NewReadonlySlice[T any](value T) ReadonlySlice[T] {
 	return ReadonlySlice[T]{
 		Slice: &Slice[T]{
-			EventTarget: et.NewEventTarget(),
+			EventTarget: NewEventTarget(),
 			value:       value,
 		},
 	}

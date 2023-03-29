@@ -1,21 +1,18 @@
-package transactor
+package cinqgo
 
 import (
 	"os"
-
-	et "github.com/kasif-apps/cinqgo/event_target"
-	s "github.com/kasif-apps/cinqgo/slice"
 )
 
 type IOTransactor[T any] struct {
-	Slice  *s.Slice[T]
+	Slice  *Slice[T]
 	Source string
 }
 
 func (t IOTransactor[T]) Init() func() {
 	slice := *t.Slice
 
-	return slice.Subscribe(func(e et.Event) {
+	return slice.Subscribe(func(e Event) {
 		data, err := Encode(e.Detail)
 
 		if err != nil {

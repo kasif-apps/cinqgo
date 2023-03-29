@@ -1,4 +1,4 @@
-package eventtarget
+package cinqgo
 
 type Event struct {
 	EventType string
