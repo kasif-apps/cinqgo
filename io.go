@@ -65,14 +65,6 @@ func (t *IOTransactor[T]) Load() error {
 	return nil
 }
 
-// type NewIOTOptions[T any] struct {
-// 	Source         string
-// 	Encode         func(value T) ([]byte, error)
-// 	Decode         func(record []byte) (T, error)
-// 	EncodeParadigm func(value []byte) ([]byte, error)
-// 	DecodeParadigm func(value []byte) ([]byte, error)
-// }
-
 func NewIOTransactor[T any](slice *Slice[T], source string) IOTransactor[T] {
 	return IOTransactor[T]{
 		Slice:  slice,
