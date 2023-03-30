@@ -12,7 +12,7 @@ type Slice[T any] struct {
 
 type SetterFunc[T any] func(old_value T) (T, error)
 
-type GetterFunc[T any, K any] func(value T) K
+type GetterFunc[T, K any] func(value T) K
 
 func (slice *Slice[T]) Assign(value T) error {
 	slice.commit(value)
@@ -47,16 +47,16 @@ func (slice Slice[T]) Subscribe(callback_fn func(e Event)) func() {
 	}
 }
 
-func Derive[T any, K any](parent Slice[T], getter GetterFunc[T, K]) ReadonlySlice[K] {
+func Derive[T, K any](parent Slice[T], getter GetterFunc[T, K]) (ReadonlySlice[K], func()) {
 	intrinsic_value := getter(parent.value)
 	sub_slice := NewReadonlySlice(intrinsic_value)
 
-	parent.Subscribe(func(e Event) {
+	unsubscribe := parent.Subscribe(func(e Event) {
 		new_value := getter(e.Detail.(T))
 		sub_slice.assign(new_value)
 	})
 
-	return sub_slice
+	return sub_slice, unsubscribe
 }
 
 func NewSlice[T any](value T) Slice[T] {
