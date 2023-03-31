@@ -16,7 +16,7 @@ func TestIOWrite(t *testing.T) {
 
 	dir, _ := os.Getwd()
 	target := path.Join(dir, "data.json")
-	transactor := NewIOTransactor(&slice, target)
+	transactor := NewFileTransactor(&slice, target)
 
 	defer transactor.Init()()
 
@@ -42,7 +42,7 @@ func TestEncoding(t *testing.T) {
 	dir, _ := os.Getwd()
 	target := path.Join(dir, "data-corrupt.json")
 
-	transactor := NewIOTransactor(&slice, target)
+	transactor := NewFileTransactor(&slice, target)
 
 	transactor.EncodeParadigm = func(value []byte) ([]byte, error) {
 		v := string(value)

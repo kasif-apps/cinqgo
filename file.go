@@ -4,13 +4,13 @@ import (
 	"os"
 )
 
-type IOTransactor[T any] struct {
+type FileTransactor[T any] struct {
 	Transactor[T]
 	Slice  *Slice[T]
 	Source string
 }
 
-func (t IOTransactor[T]) Init() func() {
+func (t FileTransactor[T]) Init() func() {
 	slice := *t.Slice
 
 	return slice.Subscribe(func(e Event) {
@@ -35,7 +35,7 @@ func (t IOTransactor[T]) Init() func() {
 	})
 }
 
-func (t *IOTransactor[T]) Load() error {
+func (t *FileTransactor[T]) Load() error {
 	raw, err := os.ReadFile(t.Source)
 
 	if err != nil {
@@ -62,10 +62,13 @@ func (t *IOTransactor[T]) Load() error {
 	return nil
 }
 
-func NewIOTransactor[T any](slice *Slice[T], source string) IOTransactor[T] {
-	return IOTransactor[T]{
-		Transactor: Transactor[T]{},
-		Slice:      slice,
-		Source:     source,
+func NewFileTransactor[T any](slice *Slice[T], source string) FileTransactor[T] {
+	return FileTransactor[T]{
+		Transactor: Transactor[T]{
+			Encode: Encode[T],
+			Decode: Decode[T],
+		},
+		Slice:  slice,
+		Source: source,
 	}
 }
