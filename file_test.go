@@ -11,7 +11,7 @@ type Data struct {
 	Count int `json:"count"`
 }
 
-func TestIOWrite(t *testing.T) {
+func TestFileWrite(t *testing.T) {
 	slice := NewSlice(Data{Count: 10})
 
 	dir, _ := os.Getwd()

@@ -6,7 +6,6 @@ import (
 
 type FileTransactor[T any] struct {
 	Transactor[T]
-	Slice  *Slice[T]
 	Source string
 }
 
@@ -65,10 +64,10 @@ func (t *FileTransactor[T]) Load() error {
 func NewFileTransactor[T any](slice *Slice[T], source string) FileTransactor[T] {
 	return FileTransactor[T]{
 		Transactor: Transactor[T]{
+			Slice:  slice,
 			Encode: Encode[T],
 			Decode: Decode[T],
 		},
-		Slice:  slice,
 		Source: source,
 	}
 }
