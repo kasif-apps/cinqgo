@@ -61,7 +61,7 @@ func (t *IOTransactor[T]) Load() error {
 		return err
 	}
 
-	t.Slice.Assign(value)
+	t.Slice.Set(value)
 	return nil
 }
 

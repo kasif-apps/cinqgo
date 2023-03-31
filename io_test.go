@@ -11,12 +11,6 @@ type Data struct {
 	Count int `json:"count"`
 }
 
-func assertEqual(t *testing.T, a interface{}, b interface{}) {
-	if a != b {
-		t.Fatalf("%s != %s", a, b)
-	}
-}
-
 func TestIOWrite(t *testing.T) {
 	slice := NewSlice(Data{Count: 10})
 
@@ -26,7 +20,7 @@ func TestIOWrite(t *testing.T) {
 
 	defer transactor.Init()()
 
-	slice.Assign(Data{Count: 11})
+	slice.Set(Data{Count: 11})
 
 	raw, err := os.ReadFile(target)
 
@@ -66,7 +60,7 @@ func TestEncoding(t *testing.T) {
 	defer transactor.Init()()
 	transactor.Load()
 
-	slice.Assign(Data{Count: 5})
+	slice.Set(Data{Count: 5})
 
 	assertEqual(t, slice.Get().Count, 5)
 

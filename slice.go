@@ -14,12 +14,12 @@ type SetterFunc[T any] func(old_value T) (T, error)
 
 type GetterFunc[T, K any] func(value T) K
 
-func (slice *Slice[T]) Assign(value T) error {
+func (slice *Slice[T]) Set(value T) error {
 	slice.commit(value)
 	return nil
 }
 
-func (slice *Slice[T]) Set(setter SetterFunc[T]) error {
+func (slice *Slice[T]) SetFunc(setter SetterFunc[T]) error {
 	newValue, err := setter(slice.value)
 
 	if err != nil {
@@ -28,6 +28,16 @@ func (slice *Slice[T]) Set(setter SetterFunc[T]) error {
 
 	slice.commit(newValue)
 	return nil
+}
+
+func (slice *Slice[T]) SetChan(channel chan T) {
+	value := <-channel
+	slice.commit(value)
+}
+
+func (slice *Slice[T]) SetChanFunc(channel chan SetterFunc[T]) {
+	setter := <-channel
+	slice.SetFunc(setter)
 }
 
 func (slice *Slice[T]) commit(value T) {
@@ -78,11 +88,19 @@ func (slice ReadonlySlice[T]) Get() T {
 	return slice.Slice.Get()
 }
 
-func (slice *ReadonlySlice[T]) Assign(value T) error {
-	return errors.New("cannot assign to a readonly slice")
+func (slice *ReadonlySlice[T]) Set(value T) error {
+	return errors.New("cannot set a readonly slice")
 }
 
-func (slice *ReadonlySlice[T]) Set(setter SetterFunc[T]) error {
+func (slice *ReadonlySlice[T]) SetFunc(setter SetterFunc[T]) error {
+	return errors.New("cannot set a readonly slice")
+}
+
+func (slice *ReadonlySlice[T]) SetChan(channel chan T) error {
+	return errors.New("cannot set a readonly slice")
+}
+
+func (slice *ReadonlySlice[T]) SetChanFunc(channel chan SetterFunc[T]) error {
 	return errors.New("cannot set a readonly slice")
 }
 
