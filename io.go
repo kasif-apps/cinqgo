@@ -5,12 +5,9 @@ import (
 )
 
 type IOTransactor[T any] struct {
-	Slice          *Slice[T]
-	Source         string
-	Encode         func(value T) ([]byte, error)
-	Decode         func(record []byte) (T, error)
-	EncodeParadigm func(value []byte) ([]byte, error)
-	DecodeParadigm func(value []byte) ([]byte, error)
+	Transactor[T]
+	Slice  *Slice[T]
+	Source string
 }
 
 func (t IOTransactor[T]) Init() func() {
@@ -67,7 +64,8 @@ func (t *IOTransactor[T]) Load() error {
 
 func NewIOTransactor[T any](slice *Slice[T], source string) IOTransactor[T] {
 	return IOTransactor[T]{
-		Slice:  slice,
-		Source: source,
+		Transactor: Transactor[T]{},
+		Slice:      slice,
+		Source:     source,
 	}
 }
